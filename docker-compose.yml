@@ -1,0 +1,103 @@
+version: "3.9"
+services:
+  equipment-service:
+    build: ./equipment-service
+    image: micro/equipment-service:dev
+    container_name: equipment-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+  trainer-service:
+    build: ./trainer-service
+    image: micro/trainer-service:dev
+    container_name: trainer-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+  member-service:
+    build: ./member-service
+    image: micro/member-service:dev
+    container_name: member-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+  class-service:
+    build: ./class-service
+    image: micro/class-service:dev
+    container_name: class-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+      - trainer.service.url=http://trainer-service:8080
+      - equipment.service.url=http://equipment-service:8082
+      - member.service.url=http://member-service:8081
+
+  notification-service:
+    build: ./notification-service
+    image: micro/notification-service:dev
+    container_name: notification-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - rabbitmq
+      - keycloak
+
+  payment-service:
+    build: ./payment-service
+    image: micro/payment-service:dev
+    container_name: payment-service
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - rabbitmq
+      - keycloak
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.4
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      - KC_BOOTSTRAP_ADMIN_USERNAME=admin
+      - KC_BOOTSTRAP_ADMIN_PASSWORD=admin
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
+      - KC_HEALTH_ENABLED=true
+    command: start-dev --import-realm
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./gimnasio-realm.json:/opt/keycloak/data/import/gimnasio-realm.json
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-gateway
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - class-service
+      - equipment-service
+      - member-service
+      - trainer-service
+      - notification-service
+      - payment-service
+      - rabbitmq
+      - keycloak
+
+volumes:
+  rabbitmq_data:
+  keycloak_data:
