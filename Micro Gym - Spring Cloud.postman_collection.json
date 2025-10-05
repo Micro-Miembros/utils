@@ -1,0 +1,898 @@
+{
+	"info": {
+		"_postman_id": "7fe72c86-398f-4ef7-9d19-16547b95edc5",
+		"name": "Micro Gym - Spring Cloud",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34458513"
+	},
+	"item": [
+		{
+			"name": "Login as Admin",
+			"item": [
+				{
+					"name": "Get token as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"let response = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"token\", response.access_token);\r",
+									"pm.expect(pm.response.code).to.eql(200);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": " application/x-www-form-urlencoded",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "member-service",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "**********",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "admin",
+									"type": "text"
+								},
+								{
+									"key": "",
+									"value": "",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8080/realms/gimnasio/protocol/openid-connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"realms",
+								"gimnasio",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Recordar que es necesario crear un usuario admin"
+		},
+		{
+			"name": "Entrenador",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_1}}/api/gimnasio/entrenadores",
+							"host": [
+								"{{baseURL_1}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"entrenadores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"José\",\r\n    \"especialidad\": \"Acondicionamiento físico\",\r\n    \"reservado\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_1}}/api/gimnasio/entrenadores",
+							"host": [
+								"{{baseURL_1}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"entrenadores"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reservar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_1}}/api/gimnasio/entrenadores/1/reservar",
+							"host": [
+								"{{baseURL_1}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"entrenadores",
+								"1",
+								"reservar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar reserva",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_1}}/api/gimnasio/entrenadores/1/cancelar",
+							"host": [
+								"{{baseURL_1}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"entrenadores",
+								"1",
+								"cancelar"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Equipo",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_3}}/api/gimnasio/equipos",
+							"host": [
+								"{{baseURL_3}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Caminadora\",\r\n    \"descripcion\": \"Caminadora con velocidad e inclinación programable\",\r\n    \"cantidad\": 5\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_3}}/api/gimnasio/equipos",
+							"host": [
+								"{{baseURL_3}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"equipos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reservar",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_3}}/api/gimnasio/equipos/1/reservar/2",
+							"host": [
+								"{{baseURL_3}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"equipos",
+								"1",
+								"reservar",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Devolver",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_3}}/api/gimnasio/equipos/1/devolver/2",
+							"host": [
+								"{{baseURL_3}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"equipos",
+								"1",
+								"devolver",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Miembro",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_2}}/api/gimnasio/miembros",
+							"host": [
+								"{{baseURL_2}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Luisa\",\r\n    \"email\": \"luisa@gmail.com\",\r\n    \"membresia\": {\r\n    \"fechaInscripcion\": \"2025-08-17\",\r\n    \"fechaExpiracion\": \"2025-09-17\",\r\n    \"tipo\": \"BASICO\"\r\n    },\r\n    \"simularFalloPago\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_2}}/api/gimnasio/miembros",
+							"host": [
+								"{{baseURL_2}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create -payment error",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Luisa\",\r\n    \"email\": \"luisa@gmail.com\",\r\n    \"membresia\": {\r\n    \"fechaInscripcion\": \"2025-08-17\",\r\n    \"fechaExpiracion\": \"2025-09-17\",\r\n    \"tipo\": \"BASICO\"\r\n    },\r\n    \"simularFalloPago\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_2}}/api/gimnasio/miembros",
+							"host": [
+								"{{baseURL_2}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"miembros"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Membresía activa",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_2}}/api/gimnasio/miembros/1/activa",
+							"host": [
+								"{{baseURL_2}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"miembros",
+								"1",
+								"activa"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Clases",
+			"item": [
+				{
+					"name": "GetAll",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Crossfit\",\r\n    \"horario\": \"2028-08-19T08:00:46.207765\",\r\n    \"capacidadMaxima\": 50,\r\n    \"trainerId\": null,\r\n    \"equipoId\": null,\r\n    \"cantidadEquipos\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/1/cambiar-horario?nuevaFechaHora=2024-12-20T08:00:00",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"1",
+								"cambiar-horario"
+							],
+							"query": [
+								{
+									"key": "nuevaFechaHora",
+									"value": "2024-12-20T08:00:00"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reservar entrenador",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Crossfit\",\r\n    \"horario\": \"2028-08-19T08:00:46.207765\",\r\n    \"capacidadMaxima\": 50,\r\n    \"trainerId\": null,\r\n    \"equipoId\": null,\r\n    \"cantidadEquipos\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/3/reservar-entrenador/1",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"3",
+								"reservar-entrenador",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancelar entrenador",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Crossfit\",\r\n    \"horario\": \"2028-08-19T08:00:46.207765\",\r\n    \"capacidadMaxima\": 50,\r\n    \"trainerId\": null,\r\n    \"equipoId\": null,\r\n    \"cantidadEquipos\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/3/cancelar-entrenador/1",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"3",
+								"cancelar-entrenador",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reservar equipo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Crossfit\",\r\n    \"horario\": \"2028-08-19T08:00:46.207765\",\r\n    \"capacidadMaxima\": 50,\r\n    \"trainerId\": null,\r\n    \"equipoId\": null,\r\n    \"cantidadEquipos\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/3/reservar-equipo/1/cantidad/5",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"3",
+								"reservar-equipo",
+								"1",
+								"cantidad",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Devolver equipo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"Crossfit\",\r\n    \"horario\": \"2028-08-19T08:00:46.207765\",\r\n    \"capacidadMaxima\": 50,\r\n    \"trainerId\": null,\r\n    \"equipoId\": null,\r\n    \"cantidadEquipos\": null\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/3/devolver-equipo/1/cantidad/5",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"3",
+								"devolver-equipo",
+								"1",
+								"cantidad",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Añadir miembro",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/1/agregar-miembro/1",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"1",
+								"agregar-miembro",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar miembro",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL_4}}/api/gimnasio/clases/1/eliminar-miembro/1",
+							"host": [
+								"{{baseURL_4}}"
+							],
+							"path": [
+								"api",
+								"gimnasio",
+								"clases",
+								"1",
+								"eliminar-miembro",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					"pm.test(\"Status code is 200 (OK)\", function () {\r",
+					"    pm.expect(pm.response.code).equals(200)\r",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL_1",
+			"value": "http://localhost"
+		},
+		{
+			"key": "baseURL_3",
+			"value": "http://localhost"
+		},
+		{
+			"key": "baseURL_2",
+			"value": "http://localhost"
+		},
+		{
+			"key": "baseURL_4",
+			"value": "http://localhost"
+		},
+		{
+			"key": "biblioToken",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
