@@ -4,39 +4,74 @@ services:
     build: ./equipment-service
     image: micro/equipment-service:dev
     container_name: equipment-service
+    ports:
+      - "8082:8082"
     environment:
       - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - eureka-server
   trainer-service:
     build: ./trainer-service
     image: micro/trainer-service:dev
     container_name: trainer-service
+    ports:
+      - "8084:8084"
     environment:
       - SPRING_PROFILES_ACTIVE=default
-  member-service:
+    depends_on:
+      - eureka-server
+
+  member-service-1:
+    ports:
+      - "8081:8081"
+    container_name: member-service-1
     build: ./member-service
     image: micro/member-service:dev
-    container_name: member-service
     environment:
       - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - eureka-server
+
+  member-service-2:
+    ports:
+      - "8089:8089"
+    container_name: member-service-2
+    build: ./member-service
+    image: micro/member-service:dev
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - eureka-server
+
+
   class-service:
     build: ./class-service
     image: micro/class-service:dev
     container_name: class-service
+    ports:
+      - "8083:8083"
     environment:
       - SPRING_PROFILES_ACTIVE=default
-      - trainer.service.url=http://trainer-service:8080
+      - trainer.service.url=http://trainer-service:8084
       - equipment.service.url=http://equipment-service:8082
       - member.service.url=http://member-service:8081
-
+    depends_on:
+      - trainer-service
+      - equipment-service
+      - member-service-1
+      - eureka-server
   notification-service:
     build: ./notification-service
     image: micro/notification-service:dev
     container_name: notification-service
+    ports:
+      - "8088:8088"
     environment:
       - SPRING_PROFILES_ACTIVE=default
     depends_on:
       - rabbitmq
       - keycloak
+      - eureka-server
 
   payment-service:
     build: ./payment-service
@@ -49,6 +84,7 @@ services:
     depends_on:
       - rabbitmq
       - keycloak
+      - eureka-server
 
   rabbitmq:
     image: rabbitmq:3.13-management
@@ -79,24 +115,98 @@ services:
     command: start-dev --import-realm
     volumes:
       - keycloak_data:/opt/keycloak/data
-      - ./gimnasio-realm.json:/opt/keycloak/data/import/gimnasio-realm.json
+      - ./keycloak-import:/opt/keycloak/data/import
 
-  nginx:
-    image: nginx:latest
-    container_name: nginx-gateway
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+  
+  kafka:
+    image: confluentinc/cp-kafka:7.4.4
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  ocupacion-consumer:
+    build: ./ocupacion-consumer
+    image: micro/ocupacion-consumer:dev
+    container_name: ocupacion-consumer
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - kafka
+      - eureka-server
+
+  resumen-consumer:
+    build: ./resumen-consumer
+    image: micro/resumen-consumer:dev
+    container_name: resumen-consumer
+    ports:
+      - "8087:8087"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
+    depends_on:
+      - kafka
+      - eureka-server
+
+  # nginx:
+  #   image: nginx:latest
+  #   container_name: nginx-gateway
+  #   ports:
+  #     - "80:80"
+  #   volumes:
+  #     - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+  #   depends_on:
+  #     - class-service
+  #     - equipment-service
+  #     - member-service
+  #     - trainer-service
+  #     - notification-service
+  #     - payment-service
+  #     - rabbitmq
+  #     - keycloak
+
+  api-gateway:
+    build: ./api-gateway
+    image: micro/api-gateway:dev
+    container_name: api-gateway
     ports:
       - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
     depends_on:
       - class-service
       - equipment-service
-      - member-service
+      - member-service-1
       - trainer-service
       - notification-service
       - payment-service
       - rabbitmq
       - keycloak
+      - eureka-server
+
+  eureka-server:
+    build: ./eureka-server
+    image: micro/eureka-server:dev
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=default
 
 volumes:
   rabbitmq_data:
